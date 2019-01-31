@@ -7,6 +7,8 @@ import com.jessicapeixe.cidade.repository.CidadeRepository;
 import com.jessicapeixe.cidade.resource.CidadeResource;
 import com.jessicapeixe.cidade.assembler.CidadeResourceAssembler;
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -86,9 +88,34 @@ public class CidadeRestController {
         return repository.findAll().size();
     }
 
-    //@ApiOperation("Retornar a quantidade de registros por estado")
-    //@GetMapping("/quantidade/estado")
-    //public List<Object[]> getQuantidadePorEstado() {
-    //    return repository.getQuantidadePorEstado();
-    //}
+    @ApiOperation("Retornar a quantidade de registros por estado")
+    @GetMapping("/quantidade/estado")
+    public List<Object[]> getQuantidadePorEstado() {
+        return repository.getQuantidadePorEstado();
+    }
+
+    @ApiOperation("Retornar o nome dos estados com maior e menor quantidade e a quantidade de cidades")
+    @GetMapping("/estado/maiormenor")
+    public List<Object[]> getMaiorMenorEstado() {
+        return repository.getMaiorMenorEstado();
+    }
+
+    @ApiOperation("Retornar o nome das duas cidades mais distantes uma da outra")
+    @GetMapping("/maiordistancia")
+    public List<Object[]> getCidadeMaisDistante() {
+        return repository.getCidadeMaisDistante();
+    }
+
+    @ApiOperation("Buscar os registros da coluna e texto informado")
+    @GetMapping("/{coluna}/{valor}")
+    public ResponseEntity<List<CidadeResource>> findByColunaTexto(@PathVariable String coluna, @PathVariable String valor) {
+        CidadeSpecification cs = new CidadeSpecification(coluna, valor);
+
+        //Logger logger = Logger.getLogger(CidadeRestController.class.getName());
+
+        //logger.info(coluna + "_aaaaaa_" + valor);
+
+        return new ResponseEntity<>(assembler.toResources(repository.findAll(cs)), HttpStatus.OK);
+
+    }
 }
